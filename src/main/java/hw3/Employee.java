@@ -1,7 +1,19 @@
 package hw3;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+
 public class Employee {
-    private static final int CURRENT_YEAR = 2024;
+    SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final String CURRENT_YEAR = date.format(new Date());;
 
     String name;
     String midName;
@@ -9,9 +21,10 @@ public class Employee {
     String position;
     String phone;
     int salary;
-    int birth;
+    String birth;
 
-    public Employee(String name, String midName, String surName, String position, String phone, int salary, int birth) {
+    public Employee(String name, String midName, String surName, String position, String phone,
+                    int salary, String birth) {
         this.name = name;
         this.midName = midName;
         this.surName = surName;
@@ -58,7 +71,12 @@ public class Employee {
     }
 
     public int getAge() {
-        return CURRENT_YEAR - birth;
+        LocalDate start = LocalDate.parse(birth, formatter);
+        LocalDate end = LocalDate.parse(CURRENT_YEAR, formatter);
+        Duration duration = Duration.ofDays(DAYS.between(start, end));
+        long age = ChronoUnit.YEARS.between(LocalDateTime.now(),
+                LocalDateTime.now().plus(duration));
+        return (int) age;
     }
 
     public void info() {
@@ -73,15 +91,8 @@ public class Employee {
                 '}');
     }
 
-    private void increaseSalary(int amount) {
+    void increaseSalary(int amount) {
         this.salary += amount;
-    }
-
-    public static void increaser(Employee[] emp) {
-        for (Employee employee : emp) {
-            if (employee.getAge() > 45)
-                employee.increaseSalary(5000);
-        }
     }
 
     public static float averageSalary(Employee[] emp) {
